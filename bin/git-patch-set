@@ -7,7 +7,21 @@
 pre_patchset_hook=.git/hooks/pre-patch-set
 post_patchset_hook=.git/hooks/post-patch-set
 
-git rev-list $@ > /dev/null 
+if [ $# -lt 1 ]; then
+	echo "at least one cmdline arg is required"
+	echo "usage: $(basename $0) [<git format-patch arguments>] <rev-list>"
+	exit 1
+fi
+
+# collect together all non-revlist arguments so they can be passed to the
+# "git format-patch" command below by assuming the last argument is the
+# rev-list and everything else (except the command) are arguments
+args=("$@")
+revlist=${args[-1]}
+lastidx=$((${#args[*]} - 1))
+unset args[$lastidx]
+
+git rev-list $revlist > /dev/null
 if [ $? -ne 0 ]; then
     echo "Failed to look up refs"
     exit 1
@@ -19,7 +33,7 @@ while ! [ -e ".git" ]; do
     cd ..
 done
 
-revs="${@/\//\\}"
+revs="${revlist/\//\\}"
 date=`date +%Y%m%d%H%M%S`
 basedir=patches
 dir="patches-$date-$revs"
@@ -39,7 +53,7 @@ fi
 
 mkdir -p "$odir"
 
-git format-patch -n -o $odir $@
+git format-patch "${args[@]}" -o $odir $revlist
 if [ $? -eq 0 ]; then
 	rm -f $tmplink
 	ln -sf $dir $tmplink
