@@ -38,10 +38,15 @@ if [ -x "$pre_patchset_hook" ]; then
 fi
 
 mkdir -p "$odir"
-rm -f $tmplink
-ln -sf $dir $tmplink
 
 git format-patch -n -o $odir $@
+if [ $? -eq 0 ]; then
+	rm -f $tmplink
+	ln -sf $dir $tmplink
+else
+	rm -fr "$odir"
+	rmdir $basedir > /dev/null 2>&1
+fi
 
 if [ -x "$post_patchset_hook" ]; then
     set -e
