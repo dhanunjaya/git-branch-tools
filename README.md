@@ -4,6 +4,17 @@ git-branch-tools
 A set of git tools to help manage branches better. Some of the tools use
 git-config hooks for local customization, have a look at the tools directly.
 
+Installing
+----------
+
+After cloning, simply
+
+	$ make install
+
+and use DESTDIR and/or PREFIX as necessary, e.g.
+
+	$ make PREFIX=~/local/packages/git-branch-tools install
+
 Archiving branches 
 ------------------
 Sometimes branches are not actively developed anymore but need to be
