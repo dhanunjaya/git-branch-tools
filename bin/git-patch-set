@@ -20,7 +20,7 @@ while ! [ -e ".git" ]; do
 done
 
 revs="${@/\//\\}"
-date=`date +%Y%m%d%H%M`
+date=`date +%Y%m%d%H%M%S`
 basedir=patches
 dir="patches-$date-$revs"
 tmplink="$basedir/latest"
